@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Peta Gempa</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Mencegah scrollbar yang tidak perlu */
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+    // --- GANTI DENGAN KUNCI API GEOAPIFY ANDA ---
+    var myAPIKey = "b4ea4c3086734369b678394faca5d1b6"; // <--- GANTI INI!
+
+    const map = L.map('map').setView([-2.5489, 118.0149], 5); // Default: Tengah Indonesia, zoom 5
+
+    // Tile layer dari Geoapify (osm-carto style)
+    L.tileLayer('https://maps.geoapify.com/v1/tile/osm-carto/{z}/{x}/{y}.png?apiKey=' + myAPIKey, {
+        attribution: 'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+        maxZoom: 20,
+        minZoom: 1
+    }).addTo(map);
+
+    var mainshockMarker = null;
+    var aftershockMarkers = [];
+    var distanceCircle = null;
+
+    // Fungsi untuk membersihkan semua marker dan lingkaran dari peta
+    function clearMapElements() {
+        if (mainshockMarker) {
+            map.removeLayer(mainshockMarker);
+            mainshockMarker = null;
+        }
+        aftershockMarkers.forEach(function(marker) {
+            map.removeLayer(marker);
+        });
+        aftershockMarkers = [];
+        if (distanceCircle) {
+            map.removeLayer(distanceCircle);
+            distanceCircle = null;
+        }
+    }
+
+    // Fungsi yang akan dipanggil dari Java untuk menambahkan marker gempa utama
+    // dan memusatkan peta ke sana
+    function addMainshockMarker(lat, lon, magnitude) {
+        clearMapElements(); // Hapus elemen lama dulu
+        mainshockMarker = L.marker([lat, lon], {
+            icon: L.icon({ // Custom icon jika mau
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            })
+        }).addTo(map)
+          .bindPopup("<b>Gempa Utama</b><br>Magnitudo: " + magnitude.toFixed(2))
+          .openPopup();
+        map.setView([lat, lon], 8); // Pusatkan peta dan zoom
+    }
+
+    // Fungsi untuk menambahkan marker gempa susulan
+    function addAftershockMarker(lat, lon, magnitude, distance) {
+        var aftershockIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        var marker = L.marker([lat, lon], {icon: aftershockIcon}).addTo(map)
+                       .bindPopup("<b>Gempa Susulan</b><br>Magnitudo: " + magnitude.toFixed(2) + "<br>Jarak: " + distance.toFixed(2) + " km");
+        aftershockMarkers.push(marker);
+    }
+
+    // Fungsi untuk menggambar lingkaran estimasi jarak
+    function drawDistanceCircle(lat, lon, radiusKm) {
+        if (distanceCircle) {
+            map.removeLayer(distanceCircle);
+        }
+        // Konversi KM ke Meter karena Leaflet menggunakan meter untuk radius
+        distanceCircle = L.circle([lat, lon], {
+            color: 'darkred',
+            fillColor: '#f03',
+            fillOpacity: 0.1,
+            radius: radiusKm * 1000 // radius dalam meter
+        }).addTo(map);
+        // map.fitBounds(distanceCircle.getBounds()); // Opsional: zoom agar lingkaran terlihat
+    }
+
+
+    // Event handler ketika peta diklik
+    map.on('click', function(e) {
+        var lat = e.latlng.lat;
+        var lon = e.latlng.lng;
+        // Panggil metode Java jika 'javaApp' sudah di-expose
+        if (window.javaApp) {
+            javaApp.handleMapClick(lat, lon);
+        } else {
+            console.error("Objek javaApp tidak ditemukan. Komunikasi JS-Java belum siap.");
+            // Bisa juga tampilkan alert atau isi field secara manual jika untuk debugging HTML saja
+            // alert("Peta diklik di: Lat: " + lat.toFixed(4) + ", Lon: " + lon.toFixed(4));
+        }
+    });
+
+    // Fungsi untuk memusatkan peta ke koordinat tertentu
+    function setMapView(lat, lon, zoom) {
+        map.setView([lat, lon], zoom);
+    }
+
+</script>
+
+</body>
+</html>

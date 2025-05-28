@@ -1,0 +1,11 @@
+com\getarlagi\util\GutenbergRichterLaw.class
+com\getarlagi\model\Mainshock.class
+com\getarlagi\util\OmoriLaw.class
+com\getarlagi\GetarLagiApp.class
+module-info.class
+com\getarlagi\model\Aftershock.class
+com\getarlagi\controller\MainController$JavaBridge.class
+com\getarlagi\model\AftershockCalculator.class
+com\getarlagi\util\DistanceCalculator.class
+com\getarlagi\controller\MainController.class
+com\getarlagi\model\Earthquake.class

@@ -1,0 +1,97 @@
+/* style.css */
+
+.root {
+    -fx-font-family: "Arial", sans-serif;
+    -fx-background-color: #f0f2f5; /* Light background color */
+}
+
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50; /* Dark text color */
+    -fx-padding: 0 0 15px 0;
+}
+
+.sub-header-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+    -fx-padding: 10px 0 5px 0;
+}
+
+.grid-pane {
+    -fx-padding: 10px;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555555;
+}
+
+.text-field {
+    -fx-font-size: 14px;
+    -fx-pref-height: 30px;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 3px;
+    -fx-background-color: #ffffff;
+}
+
+.text-field:focused {
+    -fx-border-color: #3498db;
+    -fx-effect: innershadow(gaussian, #3498db, 5, 0.0, 0, 0);
+}
+
+.calculate-button {
+    -fx-background-color: #2ecc71; /* Bright green color */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 0);
+}
+
+.calculate-button:hover {
+    -fx-background-color: #27ae60; /* Slightly darker green on hover */
+}
+
+.list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.list-cell {
+    -fx-background-color: #ffffff;
+    -fx-padding: 8px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #333333;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #3498db; /* Blue color for selected item */
+    -fx-text-fill: white;
+}
+
+.alert {
+    -fx-background-color: #fbecec;
+    -fx-border-color: #f5c6cb;
+    -fx-border-width: 1px;
+    -fx-text-fill: #721c24;
+}
+
+.alert .header-panel {
+    -fx-background-color: #dc3545; /* Red for error header */
+}
+
+.alert .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
