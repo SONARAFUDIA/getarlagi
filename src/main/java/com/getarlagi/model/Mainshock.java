@@ -6,7 +6,7 @@ public class Mainshock extends Earthquake {
     private String tectonicPlate;
 
     public Mainshock(double latitude, double longitude, double magnitude, LocalDateTime timestamp, String location, String tectonicPlate) {
-        super(latitude, longitude, magnitude, timestamp, location); // Call parent constructor
+        super(latitude, longitude, magnitude, timestamp, location);
         this.tectonicPlate = tectonicPlate;
     }
 

@@ -17,7 +17,6 @@ public class Earthquake {
         this.location = location;
     }
 
-    // Getters
     public double getLatitude() {
         return latitude;
     }
@@ -38,7 +37,6 @@ public class Earthquake {
         return location;
     }
 
-    // Setters - Optional, depending on whether attributes can change
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }

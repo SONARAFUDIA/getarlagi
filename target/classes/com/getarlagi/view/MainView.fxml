@@ -57,7 +57,7 @@
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label styleClass="sub-header-label" text="Peta Lokasi (Klik untuk memilih titik):" HBox.hgrow="ALWAYS" />
-                         <WebView fx:id="mapWebView" VBox.vgrow="ALWAYS" prefHeight="450.0" prefWidth="550.0" />
+                         <WebView fx:id="mapWebView" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity"/>
                      </children>
                   </VBox>
                </children>

@@ -13,31 +13,31 @@ public class GetarLagiApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        URL fxmlUrl = getClass().getResource("view/MainView.fxml"); //
+        URL fxmlUrl = getClass().getResource("view/MainView.fxml");
         if (fxmlUrl == null) {
             System.err.println("Tidak dapat menemukan MainView.fxml. Pastikan path sudah benar.");
             return;
         }
-        FXMLLoader loader = new FXMLLoader(fxmlUrl); //
-        Parent root = loader.load(); //
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+        Parent root = loader.load();
 
-        Scene scene = new Scene(root); //
-        
-        URL cssUrl = getClass().getResource("style.css"); //
+        Scene scene = new Scene(root);
+
+        URL cssUrl = getClass().getResource("style.css");
         if (cssUrl != null) {
-            scene.getStylesheets().add(cssUrl.toExternalForm()); //
+            scene.getStylesheets().add(cssUrl.toExternalForm());
         } else {
             System.err.println("Tidak dapat menemukan style.css.");
         }
 
-        primaryStage.setTitle("GetarLagi: Aplikasi Pantauan Gempa Susulan"); //
-        primaryStage.setScene(scene); //
-        primaryStage.setMinWidth(950); 
+        primaryStage.setTitle("GetarLagi: Aplikasi Pantauan Gempa Susulan");
+        primaryStage.setScene(scene);
+        primaryStage.setMinWidth(950);
         primaryStage.setMinHeight(720);
-        primaryStage.show(); //
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch(args); //
+        launch(args);
     }
 }
