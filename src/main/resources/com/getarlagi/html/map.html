@@ -25,17 +25,19 @@
 <div id="map"></div>
 
 <script>
-    var myAPIKey = "b4ea4c3086734369b678394faca5d1b6";
+    // Remove the Geoapify API key as it's not needed for standard OpenStreetMap tiles.
+    // var myAPIKey = "b4ea4c3086734369b678394faca5d1b6"; 
 
     const map = L.map('map').setView([-2.5489, 118.0149], 5); 
     window.dispatchEvent(new Event('resize'));
 
-    L.tileLayer('https://maps.geoapify.com/v1/tile/osm-carto/{z}/{x}/{y}.png?apiKey=b4ea4c3086734369b678394faca5d1b6', {
-        attribution: 'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-        maxZoom: 20
+    // Change the tileLayer URL to use OpenStreetMap's standard tile server.
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19 // Standard maxZoom for OpenStreetMap tiles
     }).addTo(map);
 
-    map.invalidateSize(); // Tambahkan ini di sini
+    map.invalidateSize(); // Ensure map size is correctly rendered
 
 
     var mainshockMarker = null;
