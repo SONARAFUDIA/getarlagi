@@ -3,16 +3,15 @@ package com.getarlagi.controller;
 import com.getarlagi.model.Aftershock;
 import com.getarlagi.model.AftershockCalculator;
 import com.getarlagi.model.Mainshock;
+import com.getarlagi.model.bmkg.Gempa;
+import com.getarlagi.service.BMKGService;
 import com.getarlagi.util.DistanceCalculator;
 
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -31,12 +30,13 @@ public class MainController {
     @FXML private TextField minAftershockMagnitudeField;
     @FXML private Button calculateButton;
     @FXML private ListView<String> aftershockListView;
+    @FXML private WebView mapWebView;
+    @FXML private Button fetchBMKGButton;
+    @FXML private Label bmkgStatusLabel;
 
-    @FXML private WebView mapWebView; 
     private WebEngine webEngine;
-
-    private AftershockCalculator calculator = new AftershockCalculator();
-
+    private final AftershockCalculator calculator = new AftershockCalculator();
+    private final BMKGService bmkgService = new BMKGService();
     private JavaBridge javaBridge;
 
 
@@ -44,11 +44,9 @@ public class MainController {
     public void initialize() {
         if (mapWebView != null) {
             webEngine = mapWebView.getEngine();
-            javaBridge = new JavaBridge(); 
-
+            javaBridge = new JavaBridge();
             webEngine.setJavaScriptEnabled(true);
 
-          
             try {
                 java.net.URL mapHtmlUrl = getClass().getResource("/com/getarlagi/html/map.html");
                 if (mapHtmlUrl != null) {
@@ -62,17 +60,15 @@ public class MainController {
                 showAlert("Error Peta", "Gagal memuat file konfigurasi peta: " + e.getMessage());
             }
 
-
             webEngine.getLoadWorker().stateProperty().addListener(
                 (obs, oldState, newState) -> {
                     if (newState == Worker.State.SUCCEEDED) {
                         JSObject window = (JSObject) webEngine.executeScript("window");
                         window.setMember("javaApp", javaBridge);
                         System.out.println("Bridge Java-JS 'javaApp' telah disiapkan.");
-
                     } else if (newState == Worker.State.FAILED) {
                         System.err.println("Gagal memuat halaman peta di WebView.");
-                        webEngine.loadContent("<html><body><h1>Gagal memuat peta.</h1><p>Pastikan Anda memiliki koneksi internet dan kunci API Geoapify sudah benar di map.html.</p></body></html>");
+                        webEngine.loadContent("<html><body><h1>Gagal memuat peta.</h1><p>Pastikan Anda memiliki koneksi internet dan file peta ada.</p></body></html>");
                     }
                 });
 
@@ -80,7 +76,6 @@ public class MainController {
             System.err.println("mapWebView belum diinisialisasi. Periksa FXML Anda.");
         }
     }
-
 
     public class JavaBridge {
         public void handleMapClick(double lat, double lon) {
@@ -90,11 +85,52 @@ public class MainController {
                 System.out.println("Peta diklik di Java: Lat: " + lat + ", Lon: " + lon);
             });
         }
-
-        // Anda bisa menambahkan metode lain di sini yang ingin dipanggil dari JavaScript
         public void log(String message) {
             System.out.println("Pesan dari JavaScript: " + message);
         }
+    }
+    
+    @FXML
+    private void handleFetchBMKGButtonAction(ActionEvent event) {
+        if(bmkgStatusLabel != null) bmkgStatusLabel.setText("Mengambil data dari BMKG...");
+
+        new Thread(() -> {
+            try {
+                Gempa gempa = bmkgService.getLatestEarthquake();
+
+                String lintangStr = gempa.getLintang();
+                String bujurStr = gempa.getBujur();
+                
+                String cleanedLintang = lintangStr.replaceAll("[^\\d.-]", "");
+                String cleanedBujur = bujurStr.replaceAll("[^\\d.-]", "");
+                
+                // === BAGIAN YANG DIPERBAIKI ===
+                // Inisialisasi 'latitude' hanya satu kali menggunakan operator ternary
+                // Ini membuatnya "effectively final"
+                double latitude = Double.parseDouble(cleanedLintang) * (lintangStr.contains("LS") ? -1.0 : 1.0);
+                double longitude = Double.parseDouble(cleanedBujur);
+                double magnitude = Double.parseDouble(gempa.getMagnitude());
+                // =============================
+
+                Platform.runLater(() -> {
+                    mainshockMagnitudeField.setText(String.format(Locale.US, "%.2f", magnitude));
+                    mainshockLatitudeField.setText(String.format(Locale.US, "%.4f", latitude));
+                    mainshockLongitudeField.setText(String.format(Locale.US, "%.4f", longitude));
+                    if(bmkgStatusLabel != null) bmkgStatusLabel.setText("Data berhasil diambil: M " + magnitude + " di " + gempa.getWilayah());
+
+                     if (webEngine != null && webEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+                         webEngine.executeScript(String.format(Locale.US, "setMapView(%f, %f, 8);", latitude, longitude));
+                     }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Platform.runLater(() -> {
+                    showAlert("Gagal Mengambil Data", "Tidak dapat mengambil data gempa dari BMKG. Periksa koneksi internet Anda.\nError: " + e.getMessage());
+                    if(bmkgStatusLabel != null) bmkgStatusLabel.setText("Status: Gagal mengambil data.");
+                });
+            }
+        }).start();
     }
 
 
@@ -154,7 +190,6 @@ public class MainController {
                 webEngine.executeScript(String.format(Locale.US, "drawDistanceCircle(%f, %f, %f);",
                     mainshock.getLatitude(), mainshock.getLongitude(), estimatedRuptureZoneKm));
             }
-
 
         } catch (NumberFormatException e) {
             showAlert("Input Error", "Pastikan semua field diisi dengan angka yang valid.");
