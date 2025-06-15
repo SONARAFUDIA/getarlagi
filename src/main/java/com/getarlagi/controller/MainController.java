@@ -15,7 +15,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import netscape.javascript.JSObject; // Untuk komunikasi Java-JS
+import netscape.javascript.JSObject;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
