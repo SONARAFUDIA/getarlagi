@@ -169,7 +169,7 @@ public class MainController {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 for (Aftershock as : predictedAftershocks) {
                     aftershockListView.getItems().add(String.format(Locale.US,
-                        "Mag: %.2f, Lat: %.4f, Lon: %.4f, Est. Dist: %.2f km, Time: %s",
+                        "Mag: %.2f, Lintang: %.4f, Bujur: %.4f, Est. Jarak: %.2f km, Waktu: %s",
                         as.getMagnitude(), as.getLatitude(), as.getLongitude(),
                         as.getMainshockDistanceKm(), as.getTimestamp().format(formatter)
                     ));

@@ -39,9 +39,9 @@
                                     <children>
                                         <Label text="Magnitudo:" />
                                         <TextField fx:id="mainshockMagnitudeField" promptText="misal: 7.0" GridPane.columnIndex="1" />
-                                        <Label text="Latitude:" GridPane.rowIndex="1" />
+                                        <Label text="Lintang:" GridPane.rowIndex="1" />
                                         <TextField fx:id="mainshockLatitudeField" promptText="misal: -6.8762" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                        <Label text="Longitude:" GridPane.rowIndex="2" />
+                                        <Label text="Bujur:" GridPane.rowIndex="2" />
                                         <TextField fx:id="mainshockLongitudeField" promptText="misal: 107.6042" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                         <Label prefHeight="30.0" prefWidth="203.0" text="DurasiPrediksi(jam):" GridPane.rowIndex="3">
                                  <font>
